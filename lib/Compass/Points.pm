@@ -11,6 +11,7 @@ my %FIELDS;
 my @DATA;
 my %DATA;
 
+# initialize from data section
 while ( <DATA> ) {
 	last if m!\A__END__\b!;	# stop on end marker
 	chomp;			# remove newline
@@ -22,8 +23,11 @@ while ( <DATA> ) {
 	# remove degree sign
 	s!°\z!! for @row;
 
+	# bind to wind class for stringification and accessors
+	my $row = bless( \@row, __PACKAGE__ . "::Wind" );
+
 	# add row as separate columns
-	push( @DATA, \@row );
+	push( @DATA, $row );
 
 	# get header from first line
 	if ( @DATA == 1 ) {
@@ -39,8 +43,46 @@ while ( <DATA> ) {
 		my $key = lc( $row[ $FIELDS{ $field } ] );
 
 		# point from key per field to row
-		$DATA{ $field }{ $key } = \@row;
+		$DATA{ $field }{ $key } = $row;
 	}
+}
+
+# abbr -> Compass::Points::Wind
+sub abbr
+{
+	my $class = shift;
+	my $abbr = lc( shift // "" );
+
+	return undef
+		unless exists( $DATA{abbr}{ $abbr } );
+
+	return $DATA{abbr}{ $abbr };
+}
+
+# id -> Compass::Points::Wind
+sub id
+{
+	my $class = shift;
+	my $id = shift;
+
+	return undef
+		if $id > @DATA;
+
+	return $DATA[ $id ];
+}
+
+# val -> Compass::Points::Wind
+sub val
+{
+	my $class = shift;
+	my $val = shift;
+	my ( $data ) = grep +(
+		$_->[ $FIELDS{id} ] ne "id" &&
+		$val >= $_->[ $FIELDS{low} ] &&
+		$val <= $_->[ $FIELDS{high} ]
+	), @DATA;
+
+	return $data;
 }
 
 # build mapping method for every field
@@ -61,41 +103,34 @@ for my $n ( 0 .. $#FIELDS ) {
 			return $data->[ $n ];
 		};
 	}
+
+	# accessors for wind class
+	my $method = __PACKAGE__ . "::Wind::$FIELDS[$n]";
+
+	no strict "refs";
+
+	*$method = sub {
+		local *__ANON__ = $method;
+
+		return shift->[ $n ];
+	};
+
 }
 
-sub abbr
+# namespace for stringification support and accessors
 {
-	my $class = shift;
-	my $abbr = lc( shift // "" );
+	package Compass::Points::Wind;
 
-	return undef
-		unless exists( $DATA{abbr}{ $abbr } );
+	use overload
+	    '""'	=> \&to_string
+	;
 
-	return $DATA{abbr}{ $abbr };
-}
+	sub to_string
+	{
+		return shift->[ $FIELDS{abbr} ];
+	}
 
-sub id
-{
-	my $class = shift;
-	my $id = shift;
-
-	return undef
-		if $id > @DATA;
-
-	return $DATA[ $id ];
-}
-
-sub val
-{
-	my $class = shift;
-	my $val = shift;
-	my ( $data ) = grep +(
-		$_->[ $FIELDS{id} ] ne "id" &&
-		$val >= $_->[ $FIELDS{low} ] &&
-		$val <= $_->[ $FIELDS{high} ]
-	), @DATA;
-
-	return $data;
+	1;
 }
 
 1;
