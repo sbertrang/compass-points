@@ -1,0 +1,6 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/Compass-Points.t
+lib/Compass/Points.pm
