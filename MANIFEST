@@ -1,6 +1,9 @@
 Changes
+lib/Compass/Points.pm
 Makefile.PL
 MANIFEST
+PLAN
 README
-t/Compass-Points.t
-lib/Compass/Points.pm
+t/000_load.t
+t/010_basic.t
+t/020_abbr2deg.t

@@ -1,6 +1,5 @@
 Revision history for Perl extension Compass::Points.
 
-0.01  Sun May  4 17:11:00 2014
-	- original version; created by h2xs 1.23 with options
-		-AXn Compass::Points
+0.01  Sun May  4 17:11:00 CEST 2014
+	- beginning of the project and first code
 
