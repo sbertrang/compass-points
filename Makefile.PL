@@ -1,12 +1,24 @@
-use 5.018002;
+use 5.005;
+
+use strict;
+use warnings;
+
 use ExtUtils::MakeMaker;
-# See lib/ExtUtils/MakeMaker.pm for details of how to influence
-# the contents of the Makefile that is written.
+
 WriteMakefile(
-    NAME              => 'Compass::Points',
-    VERSION_FROM      => 'lib/Compass/Points.pm', # finds $VERSION
-    PREREQ_PM         => {}, # e.g., Module::Name => 1.1
-    ($] >= 5.005 ?     ## Add these new keywords supported since 5.005
-      (ABSTRACT_FROM  => 'lib/Compass/Points.pm', # retrieve abstract from module
-       AUTHOR         => 'A. U. Thor <simon@>') : ()),
+    NAME            => 'Compass::Points',
+    VERSION_FROM    => 'lib/Compass/Points.pm',
+    PREREQ_PM       => {},
+    ABSTRACT_FROM   => 'lib/Compass/Points.pm',
+    AUTHOR          => 'Simon Bertrang <janus@cpan.org>',
+    LICENSE         => 'perl',
+    META_MERGE      => {
+        resources       => {
+            license         => 'http://dev.perl.org/licenses/',
+            repository      => 'https://github.com/sbertrang/compass-points.git',
+            bugtracker      => 'https://github.com/sbertrang/compass-points/issues',
+        },
+    },
 );
+
+# vim: ts=4 sw=4 et:
